@@ -1,21 +1,24 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import './App.css';
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import "./App.css";
+import JoinChatCard from "./pages/JoinChat";
+import ChatRoom from "./pages/ChatRoom";
+import { io } from "socket.io-client";
+export const config = {
+  endpoint: `http://localhost:8080`,
+};
+
+const socket = io.connect(config.endpoint);
 
 function App() {
-  const [data, setData] = useState("");
-  const getData = async () => {
-    const res = await axios.get("http://localhost:8080/test");
-    console.log(res.data)
-    setData(res.data.message)
-  }
-  useEffect(() => {
-    getData();
-  })
   return (
-    <div className="App">
-      <h1>{data}</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<JoinChatCard socket={socket} />} />
+        <Route path="/chat" element={<ChatRoom socket={socket} />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
