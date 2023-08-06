@@ -20,7 +20,6 @@ const AvailableChatRoomList = ({ socket }) => {
         `${config.endpoint}/rooms/${chatRoomId}/join`,
         { userId }
       );
-      console.log(socket.id);
       socket.emit("joinRoom", chatRoomId);
       navigate("/chat", { replace: true });
     } catch (error) {
