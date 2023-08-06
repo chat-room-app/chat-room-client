@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 const RoomCard = ({ room, user, handleJoinChatRoom, selectedRoom }) => {
-  let unreadCount;
+  const [unreadCount, setunreadCount] = useState(0);
+ 
   if (room.messages.readBy) {
     unreadCount = room.messages.filter(
       (message) => !message.readBy.includes(user)

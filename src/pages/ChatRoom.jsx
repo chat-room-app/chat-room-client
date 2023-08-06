@@ -36,6 +36,19 @@ const ChatRoom = ({ socket }) => {
     }
   }
 
+  const markMessagesRead = async () => {
+    if(selectedRoom){
+      try{
+        const res = axios.put(config.endpoint+"/messages", {
+          chatRoomId: selectedRoom._id,
+          userId: userId
+        })
+      }catch(err){
+        console.log(err);
+      }
+    }
+  }
+
   useEffect(() => {
     getAllChatRooms();
   }, []);
@@ -105,7 +118,7 @@ const ChatRoom = ({ socket }) => {
                 className={`mb-2 cursor-pointer`}
                 onClick={() => handleRoomClick(room)}
               >
-                <RoomCard room={room} selectedRoom={selectedRoom} />
+                <RoomCard room={room} selectedRoom={selectedRoom}  />
               </li>
             ))}
           </ul>
@@ -136,7 +149,6 @@ const ChatRoom = ({ socket }) => {
                 Send
               </button>
             </div>
-            {/* Add any additional elements for the chat footer */}
           </div>
         </div>
       )}
