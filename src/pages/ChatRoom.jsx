@@ -104,8 +104,8 @@ const ChatRoom = ({ socket }) => {
   };
 
   return (
-    <div className="flex container h-[80vh] mt-10 border-4">
-      <div className="bg-gray-100 h-full w-1/4 p-4">
+    <div className="flex container overflow-auto h-[80vh] mt-10 border-4">
+      <div className="bg-gray-100 overflow-auto h-full w-1/4 p-4">
         <h2 className="text-2xl text-center font-semibold mb-4">Rooms</h2>
         <hr />
         <AddRoom getAllChatRooms={getAllChatRooms} />
