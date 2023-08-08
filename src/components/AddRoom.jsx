@@ -2,15 +2,21 @@ import React, { useState } from "react";
 import axios from "axios";
 import { config } from "../App";
 
-const AddRoom = ({ getAllChatRooms }) => {
+const AddRoom = ({ getAllChatRooms, socket }) => {
   const [roomName, setRoomName] = useState("");
   const addRoom = async () => {
-    const userId = localStorage.getItem("userId")
-    const res = await axios.post(config.endpoint + "/rooms", {
-      name: roomName,
-      userId: userId
-    });
-    getAllChatRooms();
+    const userId = localStorage.getItem("userId");
+    try {
+      const res = await axios.post(config.endpoint + "/rooms", {
+        name: roomName,
+        userId: userId,
+      });
+      socket.emit("roomAdded");
+      getAllChatRooms();
+      setRoomName("");
+    } catch (e) {
+      console.log(e);
+    }
   };
   return (
     <div className="flex items-center justify-around">

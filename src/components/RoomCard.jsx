@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 
-const RoomCard = ({ room, user, handleJoinChatRoom, selectedRoom }) => {
-  const [unreadCount, setunreadCount] = useState(0);
- 
-  if (room.messages.readBy) {
-    unreadCount = room.messages.filter(
-      (message) => !message.readBy.includes(user)
-    ).length;
-  }
-
+const RoomCard = ({
+  room,
+  user,
+  handleJoinChatRoom,
+  selectedRoom,
+  unreadCount,
+}) => {
   const isSelected = selectedRoom && selectedRoom._id === room._id;
   return (
     <div
@@ -31,7 +29,7 @@ const RoomCard = ({ room, user, handleJoinChatRoom, selectedRoom }) => {
         </div>
       ) : (
         <div className="bg-[#FE4002] rounded-full flex justify-center items-center w-10 h-10">
-          {unreadCount || 0}
+          {isSelected ? 0 : unreadCount}
         </div>
       )}
     </div>

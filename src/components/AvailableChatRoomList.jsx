@@ -7,10 +7,15 @@ import { useNavigate } from "react-router-dom";
 const AvailableChatRoomList = ({ socket }) => {
   const navigate = useNavigate();
   const [chatRooms, setChatRooms] = useState([]);
+  let userId = localStorage.getItem("userId");
 
   const fetchChatRooms = async () => {
     const res = await axios.get(config.endpoint + "/rooms");
-    setChatRooms(res.data);
+    const allRooms = res.data;
+    const availableRooms = allRooms.filter(
+      (room) => !room.members.includes(userId)
+    );
+    setChatRooms(availableRooms);
   };
 
   const joinChatRoom = async (chatRoomId) => {
@@ -30,12 +35,17 @@ const AvailableChatRoomList = ({ socket }) => {
   useEffect(() => {
     fetchChatRooms();
   }, []);
+
+  useEffect(() => {
+    socket.on("refreshAfterRoomAdd", fetchChatRooms);
+  }, [socket]);
+
   return (
-    <div className="container mx-auto px-4 py-8 bg-slate-300 h-screen">
+    <div className="container mx-auto  overflow-auto max-h-screen px-4 py-8 bg-slate-300 h-screen">
       <h2 className="text-2xl text-center font-semibold mb-4">
         List of Available Chat Rooms
       </h2>
-      <div className="w-1/2">
+      <div className="w-1/2 overflow-auto">
         {chatRooms.map((room) => (
           <RoomCard
             key={room._id}

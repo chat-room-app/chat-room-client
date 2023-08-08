@@ -25,29 +25,45 @@ const ChatRoom = ({ socket }) => {
     }
   };
 
-  const getMessagesByRoomId = async() => {
-    try{
-      if(selectedRoom){
-        const res = await axios.get(config.endpoint + "/messages/"+selectedRoom._id);
+  const getMessagesByRoomId = async () => {
+    try {
+      if (selectedRoom) {
+        const res = await axios.get(
+          config.endpoint + "/messages/" + selectedRoom._id
+        );
         setMessages(res.data);
       }
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   const markMessagesRead = async () => {
-    if(selectedRoom){
-      try{
-        const res = axios.put(config.endpoint+"/messages", {
+    if (selectedRoom) {
+      try {
+        const res = axios.put(config.endpoint + "/messages", {
           chatRoomId: selectedRoom._id,
-          userId: userId
-        })
-      }catch(err){
+          userId: userId,
+        });
+      } catch (err) {
         console.log(err);
       }
     }
-  }
+  };
+
+  const calculateUnreadCount = (room) => {
+    if (!room || !room.messages) {
+      return 0;
+    }
+
+    let unreadCount = 0;
+    for (const message of room.messages) {
+      if (!message.readBy.includes(userId)) {
+        unreadCount++;
+      }
+    }
+    return unreadCount;
+  };
 
   useEffect(() => {
     getAllChatRooms();
@@ -56,11 +72,11 @@ const ChatRoom = ({ socket }) => {
   useEffect(() => {
     // Handle incoming newMessage event
     const handleNewMessage = (message) => {
-      console.log(message);
       setMessages((prevMessages) => {
         if (prevMessages === null) {
           return [message];
         } else {
+          getAllChatRooms();
           return [...prevMessages, message];
         }
       });
@@ -79,9 +95,9 @@ const ChatRoom = ({ socket }) => {
     }
   }, [chatRooms]);
 
-  useEffect(()=>  {
+  useEffect(() => {
     getMessagesByRoomId();
-  }, [selectedRoom])
+  }, [selectedRoom]);
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
@@ -104,13 +120,13 @@ const ChatRoom = ({ socket }) => {
   };
 
   return (
-    <div className="flex container overflow-auto h-[80vh] mt-10 border-4">
-      <div className="bg-gray-100 overflow-auto h-full w-1/4 p-4">
+    <div className="flex container overflow-hidden h-[80vh] mt-10 border-4">
+      <div className="bg-gray-100 h-full w-1/4 p-4">
         <h2 className="text-2xl text-center font-semibold mb-4">Rooms</h2>
         <hr />
-        <AddRoom getAllChatRooms={getAllChatRooms} />
+        <AddRoom getAllChatRooms={getAllChatRooms} socket={socket} />
         <hr /> <br />
-        <div className="max-h-full overflow-auto">
+        <div className="max-h-full h-[80vh] overflow-auto">
           <ul>
             {chatRooms.map((room) => (
               <li
@@ -118,23 +134,27 @@ const ChatRoom = ({ socket }) => {
                 className={`mb-2 cursor-pointer`}
                 onClick={() => handleRoomClick(room)}
               >
-                <RoomCard room={room} selectedRoom={selectedRoom}  />
+                <RoomCard
+                  room={room}
+                  selectedRoom={selectedRoom}
+                  unreadCount={calculateUnreadCount(room)}
+                />
               </li>
             ))}
           </ul>
         </div>
       </div>
       {selectedRoom && (
-        <div className="flex-grow h-full p-4 flex flex-col">
-          <div className="flex justify-between mb-2">
+        <div className="h-full p-4 flex flex-col">
+          <div className="mb-2 sticky top-0 bg-white">
             <h3 className="text-lg font-semibold">{selectedRoom.name}</h3>
           </div>
 
-          <div className="w-[60vw] overflow-auto border-t py-4">
+          <div className="w-[60vw] h-60vh overflow-auto border-t py-4 flex-grow">
             <MessageList messages={messages} userId={userId} />
           </div>
 
-          <div className="mt-2 w-3/4">
+          <div className="mt-2 w-3/4 sticky bottom-0 bg-white p-4">
             <div className="flex mb-1">
               <input
                 value={message}

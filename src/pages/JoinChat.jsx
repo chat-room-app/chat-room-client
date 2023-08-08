@@ -4,17 +4,18 @@ import AvailableChatRoomList from "../components/AvailableChatRoomList";
 import axios from "axios";
 import { config } from "../App";
 
-const JoinChatCard = ({socket}) => {
+const JoinChatCard = ({ socket }) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [showRoomList, setShowRoomList] = useState(false);
 
-
   const postUser = async () => {
-    const res = await axios.post(config.endpoint + "/users", {username: name});
+    const res = await axios.post(config.endpoint + "/users", {
+      username: name,
+    });
     const user = res.data;
     localStorage.setItem("userId", user._id);
-  }
+  };
 
   const handleJoinChat = () => {
     if (name.trim() !== "") {
