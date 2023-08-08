@@ -6,7 +6,7 @@ import JoinChatCard from "./pages/JoinChat";
 import ChatRoom from "./pages/ChatRoom";
 import { io } from "socket.io-client";
 export const config = {
-  endpoint: `http://localhost:8080`,
+  endpoint: `https://chat-app-7erk.onrender.com`,
 };
 
 const socket = io.connect(config.endpoint);
